@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ${{ values.name }}-${{ values.owner }}-01-base
+  labels:
+    app: ${{ values.name }}-${{ values.owner }}-01-base
+data:
+  log.level: info
+  service.name: "${{ values.name }}-${{ values.owner }}-01-base"
+  service.basePath: "/"
+  service.version: "v1"

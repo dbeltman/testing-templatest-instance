@@ -1,0 +1,58 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: team-alertconfig
+  #Change this to your namespace
+  namespace: ${{ values.namespace }}
+  labels:
+    alertmanagerConfig: alertmanager-config-extra
+spec:
+  receivers:
+  - name: ${{ values.namespace }}-receiver
+    slackConfigs:
+      - apiURL:
+          #Secret has to created in k8s manually for now
+          #Leave as is
+          name: project-slack-secret
+          key: key
+        #Channel has to be created manually in slack for now
+        #Change this to your namespace
+        channel: ${{ values.namespace }}
+        sendResolved: true
+        text: |
+          {{- if (index .Alerts 0).Annotations.summary }}
+          {{- "\n" -}}
+          *Summary:* {{ (index .Alerts 0).Annotations.summary }}
+          {{- end }}
+
+          {{ range .Alerts }}
+
+              {{- if .Annotations.description }}
+              {{- "\n" -}}
+              {{ .Annotations.description }}
+              {{- "\n" -}}
+              {{- end }}
+              {{- if .Annotations.message }}
+              {{- "\n" -}}
+              {{ .Annotations.message }}
+              {{- "\n" -}}
+              {{- end }}
+
+          {{- end }}
+        actions:
+        - type: button
+          text: 'Get Namespace Logs'
+          url: 'https://jumbosupermarktenbv.splunkcloud.com/en-US/app/search/search?q=search%20index%3Dapplications-int-aks%20cluster_name%3D%22{{ .CommonLabels.clustername }}%22%20namespace%3D%22{{ .CommonLabels.namespace }}%22%7C%20sort%20-%20_time%20%7C%20table%20_time%20container_name%20_raw&sid=1673520540.4875473&display.page.search.mode=verbose&dispatch.sample_ratio=1&earliest=-30m%40m&latest=now&display.page.search.tab=statistics&display.general.type=statistics'
+        title: '[{{ .Status | toUpper -}} {{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{- end -}}] {{ .CommonLabels.alertname }} {{ .CommonLabels.clustername }}'        
+        
+  route:
+    groupBy:
+    - alertname
+    #Change this to your team name to avoid conflicts in alertmanager
+    receiver: ${{ values.namespace }}-receiver
+    continue: true
+    matchers:
+    - matchType: =
+      name: namespace
+      #Change this to your namespace
+      value: ${{ values.namespace }}
