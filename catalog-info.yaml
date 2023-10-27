@@ -1,14 +1,13 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: ${{values.name | dump}}
-  description: ${{values.description | dump}}
+  name: test-ms
+  description: test-ms
   annotations:
-    github.com/project-slug: ${{values.destination.owner + "/" + values.destination.repo}}
     backstage.io/techdocs-ref: dir:.
-    backstage.io/kubernetes-id: ${{values.name }}
-    backstage.io/kubernetes-namespace: ${{values.namespace }}
+    backstage.io/kubernetes-id: test-ms
+    backstage.io/kubernetes-namespace: test
 spec:
   type: service
   lifecycle: experimental
-  owner: ${{values.owner | dump}}
+  owner: tester

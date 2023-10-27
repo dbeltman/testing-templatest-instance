@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ${{ values.name }}-${{ values.owner }}-01-base
+  name: test-ms-tester-01-base
   labels:
-    app: ${{ values.name }}-${{ values.owner }}-01-base
+    app: test-ms-tester-01-base
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ${{ values.name }}-${{ values.owner }}-01-base
+      app: test-ms-tester-01-base
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -17,11 +17,11 @@ spec:
   template:
     metadata:
       labels:
-        app: ${{ values.name }}-${{ values.owner }}-01-base
+        app: test-ms-tester-01-base
     spec:
       containers:
-        - name: ${{ values.name }}-${{ values.owner }}-01-base
-          image: containerregistrymsshawe.azurecr.io/${{ values.name }}-${{ values.owner }}-01-base:latest
+        - name: test-ms-tester-01-base
+          image: nginx:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
@@ -30,4 +30,4 @@ spec:
               cpu: "0.1"
               memory: 128Mi
           envFrom:
-            - configmapRef: ${{ values.name }}-${{ values.owner }}-01-base
+            - configmapRef: test-ms-tester-01-base

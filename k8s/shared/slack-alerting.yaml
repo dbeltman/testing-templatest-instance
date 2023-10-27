@@ -3,12 +3,12 @@ kind: AlertmanagerConfig
 metadata:
   name: team-alertconfig
   #Change this to your namespace
-  namespace: ${{ values.namespace }}
+  namespace: test
   labels:
     alertmanagerConfig: alertmanager-config-extra
 spec:
   receivers:
-  - name: ${{ values.namespace }}-receiver
+  - name: test-receiver
     slackConfigs:
       - apiURL:
           #Secret has to created in k8s manually for now
@@ -17,7 +17,7 @@ spec:
           key: key
         #Channel has to be created manually in slack for now
         #Change this to your namespace
-        channel: ${{ values.namespace }}
+        channel: test
         sendResolved: true
         text: |
           {{- if (index .Alerts 0).Annotations.summary }}
@@ -49,10 +49,10 @@ spec:
     groupBy:
     - alertname
     #Change this to your team name to avoid conflicts in alertmanager
-    receiver: ${{ values.namespace }}-receiver
+    receiver: test-receiver
     continue: true
     matchers:
     - matchType: =
       name: namespace
       #Change this to your namespace
-      value: ${{ values.namespace }}
+      value: test
